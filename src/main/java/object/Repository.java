@@ -3,12 +3,12 @@ package object;
 import java.util.Arrays;
 
 public class Repository {
-    private String[] repository = new String[0];
+    private Integer[] repository = new Integer[0];
     public Repository() {
         this.repository = getRepository();
     }
 
-    public String[] getRepository() {
+    public Integer[] getRepository() {
         return repository;
     }
 
@@ -16,7 +16,7 @@ public class Repository {
         return repository.length;
     }
 
-    public void setRepository(String[] repository) {
+    public void setRepository(Integer[] repository) {
         this.repository = repository;
     }
 
