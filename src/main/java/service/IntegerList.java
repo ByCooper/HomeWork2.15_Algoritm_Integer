@@ -7,12 +7,12 @@ import object.Repository;
 
 import java.util.Arrays;
 
-public class StringList implements ServiceStringList{
+public class IntegerList implements ServiceIntegerList {
     Repository repository = new Repository();
 
     @Override
-    public String add(String item) {
-        String[] rep = new String[repository.length() + 1];
+    public Integer add(Integer item) {
+        Integer[] rep = new Integer[repository.length() + 1];
         System.arraycopy(repository.getRepository(), 0, rep, 0, repository.length());
         rep[rep.length - 1] = item;
         repository.setRepository(rep);
@@ -20,8 +20,8 @@ public class StringList implements ServiceStringList{
     }
 
     @Override
-    public String add(int index, String item) {
-        String[] rep = new String[repository.length() + 1];
+    public Integer add(int index, Integer item) {
+        Integer[] rep = new Integer[repository.length() + 1];
         if (index > rep.length - 1) {
             throw new OutsideSelectException("Вы выбрали индекс, который находится за пределами массива");
         } else if (index == 0) {
@@ -38,8 +38,8 @@ public class StringList implements ServiceStringList{
     }
 
     @Override
-    public String set(int index, String item) {
-        String[] rep = new String[repository.length()];
+    public Integer set(int index, Integer item) {
+        Integer[] rep = new Integer[repository.length()];
         if (index > rep.length - 1) {
             throw new OutsideSelectException("Вы выбрали индекс, который находится за пределами массива");
         } else if (index == 0) {
@@ -56,11 +56,11 @@ public class StringList implements ServiceStringList{
     }
 
     @Override
-    public String remove(String item) {
+    public Integer remove(Integer item) {
         int index = Integer.MIN_VALUE;
-        String[] rep = new String[repository.length() - 1];
+        Integer[] rep = new Integer[repository.length() - 1];
         for (int i = 0; i < repository.length(); i++) {
-            if (item.equals(repository.getRepository()[i])) {
+            if (item == repository.getRepository()[i]) {
                 index = i;
             }
         }
@@ -75,16 +75,16 @@ public class StringList implements ServiceStringList{
             System.arraycopy(repository.getRepository(), index + 1, rep, index, repository.length() - (index + 1));
             repository.setRepository(rep);
         }
-        return "Элемент " + item + " удален";
+        return item;
     }
 
     @Override
-    public String remove(int index) {
+    public Integer removeIndex(int index) {
         if (index > repository.getRepository().length - 1) {
             throw new OutsideSelectException("Вы выбрали индекс, который находится за пределами массива");
         }
-        String[] rep = new String[repository.length() - 1];
-        String remove = repository.getRepository()[index];
+        Integer[] rep = new Integer[repository.length() - 1];
+        Integer remove = repository.getRepository()[index];
         if (index == 0) {
             System.arraycopy(repository.getRepository(), 1, rep, 0, repository.length() - 1);
             repository.setRepository(rep);
@@ -94,24 +94,21 @@ public class StringList implements ServiceStringList{
 
             repository.setRepository(rep);
         }
-        return "Элемент " + remove + " удален";
+        return remove;
     }
 
     @Override
-    public boolean contains(String item) {
+    public boolean contains(Integer item) {
         for (int i = 0; i < repository.length(); i++) {
             if (repository.getRepository()[i] == null) {
                 throw new NullValueFindException("В списке недопустимое значение=null");
             }
-            else if(repository.getRepository()[i].equals(item)){
-                return true;
-            }
         }
-        return false;
+        return binarySearch(sortedSelection(repository.getRepository()), item);
     }
 
     @Override
-    public int indexOf(String item) {
+    public int indexOf(Integer item) {
         for (int i = 0; i < repository.length(); i++) {
             if(repository.getRepository()[i].equals(item)){
                 int index;
@@ -122,7 +119,7 @@ public class StringList implements ServiceStringList{
     }
 
     @Override
-    public int lastIndexOf(String item) {
+    public int lastIndexOf(Integer item) {
         for (int i = repository.length() - 1; i >= 0; i--) {
             if(repository.getRepository()[i].equals(item)){
                 int index;
@@ -133,7 +130,7 @@ public class StringList implements ServiceStringList{
     }
 
     @Override
-    public String get(int index) {
+    public Integer get(int index) {
         if (index > repository.getRepository().length - 1) {
             throw new OutsideSelectException("Вы выбрали индекс, который находится за пределами массива");
         }
@@ -141,9 +138,13 @@ public class StringList implements ServiceStringList{
     }
 
     @Override
-    public boolean equals(StringList otherList) {
-        otherList.contains(null);
-        String[] rep = new String[otherList.size()];
+    public boolean equals(IntegerList otherList) {
+        for (int i = 0; i < otherList.size(); i++) {
+            if (otherList.get(i) == null) {
+                throw new NullValueFindException("В списке недопустимое значение=null");
+            }
+        }
+        Integer[] rep = new Integer[otherList.size()];
         for (int i = 0; i < otherList.size(); i++) {
             rep[i] = otherList.get(i);
         }
@@ -169,14 +170,80 @@ public class StringList implements ServiceStringList{
 
     @Override
     public void clear() {
-        String[] rep = new String[0];
+        Integer[] rep = new Integer[0];
         repository.setRepository(rep);
     }
 
     @Override
-    public String[] toArray() {
-        String[] rep = new String[repository.length()];
+    public Integer[] toArray() {
+        Integer[] rep = new Integer[repository.length()];
         System.arraycopy(repository.getRepository(), 0, rep, 0, repository.length());
         return rep;
+    }
+
+    private static void swapElements(Integer[] arr, int indexA, int indexB) {
+        int tmp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = tmp;
+    }
+
+    @Override
+    public Integer[] sortedBubble(Integer[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            for (int j = 0; j < arr.length - 1 - i; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    swapElements(arr, j, j + 1);
+                }
+            }
+        }
+        return arr;
+    }
+
+    @Override
+    public Integer[] sortedSelection(Integer[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            int minElementIndex = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] < arr[minElementIndex]) {
+                    minElementIndex = j;
+                }
+            }
+            swapElements(arr, i, minElementIndex);
+        }
+        return arr;
+    }
+
+    @Override
+    public Integer[] sortedInsert(Integer[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            int temp = arr[i];
+            int j = i;
+            while (j > 0 && arr[j - 1] >= temp) {
+                arr[j] = arr[j - 1];
+                j--;
+            }
+            arr[j] = temp;
+        }
+        return arr;
+    }
+
+    private boolean binarySearch(Integer[] arr, int element) {
+        int min = 0;
+        int max = arr.length - 1;
+
+        while (min <= max) {
+            int mid = (min + max) / 2;
+
+            if (element == arr[mid]) {
+                return true;
+            }
+
+            if (element < arr[mid]) {
+                max = mid - 1;
+            } else {
+                min = mid + 1;
+            }
+        }
+        return false;
     }
 }
