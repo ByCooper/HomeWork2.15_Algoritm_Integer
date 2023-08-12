@@ -35,6 +35,8 @@ public class Main {
         intList.add(301);
         intList.add(45);
         intList.add(117);
-        System.out.println(intList.contains(301));
+        intList.add(3011);
+        intList.add(125);
+        intList.quickSort(intList.toArray());
     }
 }
