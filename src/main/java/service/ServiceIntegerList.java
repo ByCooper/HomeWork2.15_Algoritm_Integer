@@ -85,4 +85,5 @@ public interface ServiceIntegerList {
 
     //Сортировка вариант 3 (Вставкой)
     Integer[] sortedInsert(Integer[] arr);
+    Integer[] quickSort(Integer[] arr);
 }

@@ -23,7 +23,9 @@ public class IntegerList implements ServiceIntegerList {
     public Integer add(int index, Integer item) {
         Integer[] rep = new Integer[repository.length() + 1];
         if (index > rep.length - 1) {
-            throw new OutsideSelectException("Вы выбрали индекс, который находится за пределами массива");
+//            throw new OutsideSelectException("Вы выбрали индекс, который находится за пределами массива");
+            grow();
+            add(index, item);
         } else if (index == 0) {
             System.arraycopy(repository.getRepository(), 0, rep, 1, repository.length());
             rep[index] = item;
@@ -104,7 +106,8 @@ public class IntegerList implements ServiceIntegerList {
                 throw new NullValueFindException("В списке недопустимое значение=null");
             }
         }
-        return binarySearch(sortedSelection(repository.getRepository()), item);
+        quickSort(repository.getRepository());
+        return binarySearch(repository.getRepository(), item);
     }
 
     @Override
@@ -245,5 +248,51 @@ public class IntegerList implements ServiceIntegerList {
             }
         }
         return false;
+    }
+
+
+    private void grow() {
+        Integer[] rep = new Integer[repository.length() + (repository.length() / 2)];
+        System.arraycopy(repository.getRepository(), 0, rep, 0, repository.length());
+        repository.setRepository(rep);
+    }
+
+    @Override
+    public Integer[] quickSort(Integer[] arr) {
+        if (arr.length < 2) {
+            return arr;
+        }
+        int mid = arr.length / 2;
+        Integer[] left = new Integer[mid];
+        Integer[] right = new Integer[arr.length - mid];
+        for (int i = 0; i < left.length; i++) {
+            left[i] = arr[i];
+        }
+        for (int i = 0; i < right.length; i++) {
+            right[i] = arr[mid + i];
+        }
+        quickSort(left);
+        quickSort(right);
+        merge(arr, left, right);
+        return arr;
+    }
+    public void merge(Integer[] arr, Integer[] left, Integer[] right) {
+
+        int mainP = 0;
+        int leftP = 0;
+        int rightP = 0;
+        while (leftP < left.length && rightP < right.length) {
+            if (left[leftP] <= right[rightP]) {
+                arr[mainP++] = left[leftP++];
+            } else {
+                arr[mainP++] = right[rightP++];
+            }
+        }
+        while (leftP < left.length) {
+            arr[mainP++] = left[leftP++];
+        }
+        while (rightP < right.length) {
+            arr[mainP++] = right[rightP++];
+        }
     }
 }

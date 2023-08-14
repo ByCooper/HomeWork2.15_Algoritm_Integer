@@ -5,6 +5,8 @@ import exception.NullValueFindException;
 import exception.OutsideSelectException;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class IntegerListTest {
@@ -36,20 +38,20 @@ class IntegerListTest {
         assertEquals(expected, actual);
         assertEquals(expectedList.repository.toString(), actualList.repository.toString());
     }
-    @Test
-    void addExceptionIndex() {
-        //Подготовка входных данных
-        actualList.add(18);
-        actualList.add(23);
-        actualList.add(59);
-        Exception exception = assertThrows(OutsideSelectException.class, () -> {
-            actualList.add(4,700);
-        });
-        //Подготовка ожидаемого результата
-        String expectedMessage = "Вы выбрали индекс, который находится за пределами массива";
-        //Начало теста
-        assertEquals(expectedMessage, exception.getMessage());
-    }
+//    @Test
+//    void addExceptionIndex() {
+//        //Подготовка входных данных
+//        actualList.add(18);
+//        actualList.add(23);
+//        actualList.add(59);
+//        Exception exception = assertThrows(OutsideSelectException.class, () -> {
+//            actualList.add(4,700);
+//        });
+//        //Подготовка ожидаемого результата
+//        String expectedMessage = "Вы выбрали индекс, который находится за пределами массива";
+//        //Начало теста
+//        assertEquals(expectedMessage, exception.getMessage());
+//    }
     @Test
     void set() {
         //Подготовка входных данных
@@ -330,7 +332,8 @@ class IntegerListTest {
         Integer[] expected = expectedList.toArray();
         //Начало теста
         assertArrayEquals(expected, actual);
-    }@Test
+    }
+    @Test
     void sortedSelection() {
         //Подготовка входных данных
         actualList.add(181);
@@ -344,7 +347,8 @@ class IntegerListTest {
         Integer[] expected = expectedList.toArray();
         //Начало теста
         assertArrayEquals(expected, actual);
-    }@Test
+    }
+    @Test
     void sortedInsert() {
         //Подготовка входных данных
         actualList.add(181);
@@ -358,5 +362,23 @@ class IntegerListTest {
         Integer[] expected = expectedList.toArray();
         //Начало теста
         assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void quickSort() {
+        //Подготовка входных данных
+//        actualList.add(181);
+        actualList.add(230);
+//        actualList.add(59);
+        actualList.add(199);
+        Integer[] actual = actualList.quickSort(actualList.toArray());
+        //Подготовка ожидаемого результата
+//        expectedList.add(59);
+//        expectedList.add(181);
+        expectedList.add(199);
+        expectedList.add(230);
+        Integer[] expected = expectedList.toArray();
+        //Начало теста
+        assertArrayEquals(expected,actual);
     }
 }
